@@ -10,22 +10,21 @@ function Globals()
 		this.levelRun.updateForTimerTick();
 	}
 
-	Globals.prototype.initialize = function(displayHelper, levelRun)
-	{	
-		this.displayHelper = displayHelper;
-		this.displayHelper.initialize();
+	Globals.prototype.initialize = function(display, levelRun)
+	{
+		this.display = display;
+		this.display.initialize();
 
 		this.inputHelper = new InputHelper();
 		this.inputHelper.initialize();
 
 		this.levelRun = levelRun;
-		this.levelRun.initialize();
 
 		var millisecondsPerTimerTick = 50;
 
 		this.timer = setInterval
 		(
-			"Globals.Instance.handleEventTimerTick();", 
+			"Globals.Instance.handleEventTimerTick();",
 			millisecondsPerTimerTick
 		);
 	}

@@ -1,66 +1,48 @@
 
 function IntelligenceDefnHuman()
 {
-	// do nothing	
+	// do nothing
 }
 
 {
-	IntelligenceDefnHuman.prototype.decideActionForMover = function(intelligence, mover)
+	IntelligenceDefnHuman.prototype.decideActionForMover = function(mover)
 	{
-		var player = mover;
+		var moverDefn = mover.moverDefn;
 
 		var inputHelper = Globals.Instance.inputHelper;
 
-		for (var keyCode in inputHelper.keyCodesPressed)
+		for (var key in inputHelper.keysPressed)
 		{
-			if 
-			(
-				keyCode == "32" // spacebar
-				|| keyCode == "87" // w
-			)
+			if ( key == " " || key == "w" )
 			{
-				if (player.edgeBeingStoodOn != null)
+				if (mover.platformBeingStoodOn != null)
 				{
-					player.edgeBeingStoodOn = null;
-					player.vel.y -= player.defn.accelerationJump;
-					delete inputHelper.keyCodesPressed[keyCode];
+					mover.platformBeingStoodOn = null;
+					mover.vel.y -= moverDefn.accelerationJump;
+					mover.pos.y -= 1;
+					delete inputHelper.keysPressed[key];
 				}
 			}
-			else if (keyCode == "65") // a
+			else if (key == "a" || key == "d")
 			{
 				var acceleration;
 
-				if (player.edgeBeingStoodOn == null)
+				if (mover.platformBeingStoodOn == null)
 				{
-					acceleration = player.defn.accelerationFly;
+					acceleration = moverDefn.accelerationFly;
 				}
 				else
 				{
-					acceleration = player.defn.accelerationRun;
+					acceleration = moverDefn.accelerationRun;
 				}
 
-				player.vel.x -= acceleration;
-			}
-			else if (keyCode == "68") // d
-			{
-				var acceleration;
-
-				if (player.edgeBeingStoodOn == null)
+				if (key == "a")
 				{
-					acceleration = player.defn.accelerationFly;
-				}
-				else
-				{
-					acceleration = player.defn.accelerationRun;
+					acceleration *= -1;
 				}
 
-				player.vel.x += acceleration;
+				mover.vel.x += acceleration;
 			}
-		}	
-	}
-
-	IntelligenceDefnHuman.prototype.initializeIntelligence = function(intelligence)
-	{
-		// do nothing
+		}
 	}
 }

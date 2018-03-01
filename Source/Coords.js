@@ -10,6 +10,23 @@ function Coords(x, y)
 
 	Coords.NumberOfDimensions = 2;
 
+	// instances
+
+	Coords.Instances = function()
+	{
+		if (Coords._Instances == null)
+		{
+			Coords._Instances = new Coords_Instances();
+		}
+
+		return Coords._Instances;
+	}
+
+	function Coords_Instances()
+	{
+		this.Zeroes = new Coords(0, 0);
+	}
+
 	// instance methods
 
 	Coords.prototype.add = function(other)
@@ -73,7 +90,7 @@ function Coords(x, y)
 
 		return this;
 	}
-	
+
 	Coords.prototype.dotProduct = function(other)
 	{
 		return this.x * other.x + this.y * other.y;
@@ -154,26 +171,33 @@ function Coords(x, y)
 		}
 	}
 
-	Coords.prototype.trimToRange = function(range)
+	Coords.prototype.trimToRangeMinMax = function(min, max)
 	{
-		if (this.x < 0)
+		if (this.x < min.x)
 		{
-			this.x = 0;
+			this.x = min.x;
 		}
-		else if (this.x > range.x)
+		else if (this.x > max.x)
 		{
-			this.x = range.x;
+			this.x = max.x;
 		}
 
-		if (this.y < 0)
+		if (this.y < min.y)
 		{
-			this.y = 0;
+			this.y = min.y;
 		}
-		else if (this.y > range.y)
+		else if (this.y > max.y)
 		{
-			this.y = range.y;
+			this.y = max.y;
 		}
 
 		return this;
+	}
+
+	// strings
+
+	Coords.prototype.toString = function()
+	{
+		return this.x + "x" + this.y;
 	}
 }

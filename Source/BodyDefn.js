@@ -1,22 +1,7 @@
 
-function BodyDefn
-(
-	name, 
-	accelerationRun,
-	accelerationFly,
-	velocityMaxRunning,
-	accelerationJump,
-	velocityMaxFlying,
-	intelligenceDefn,
-	face
-)
+function BodyDefn(name, collider, visual)
 {
 	this.name = name;
-	this.accelerationRun = accelerationRun;
-	this.accelerationFly = accelerationFly;
-	this.velocityMaxRunning = velocityMaxRunning;
-	this.accelerationJump = accelerationJump;
-	this.velocityMaxFlying = velocityMaxFlying;
-	this.intelligenceDefn = intelligenceDefn;
-	this.face = face;
+	this.collider = collider;
+	this.visual = visual;
 }

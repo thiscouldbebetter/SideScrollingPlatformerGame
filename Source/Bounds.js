@@ -8,18 +8,18 @@ function Bounds(min, max)
 }
 
 {
-	Bounds.prototype.overwriteWithBoundsOfCoordsMany = function(coordsSetToFindBoundsOf)
+	Bounds.prototype.ofPoints = function(points)
 	{
-		this.min.overwriteWith(coordsSetToFindBoundsOf[0]);
+		this.min.overwriteWith(points[0]);
 		this.max.overwriteWith(this.min);
 
-		for (var i = 0; i < coordsSetToFindBoundsOf.length; i++)
+		for (var i = 0; i < points.length; i++)
 		{
-			var coordsToCheck = coordsSetToFindBoundsOf[i];
+			var point = points[i];
 
 			for (var d = 0; d < Coords.NumberOfDimensions; d++)
 			{
-				var dimensionValueToCheck = coordsToCheck.dimension(d);
+				var dimensionValueToCheck = point.dimension(d);
 
 				if (dimensionValueToCheck < this.min.dimension(d))
 				{
@@ -30,10 +30,19 @@ function Bounds(min, max)
 				{
 					this.max.dimension_Set(d, dimensionValueToCheck);
 				}
-				
+
 			}
 		}
 
+		return this;
+	}
+
+	// cloneable
+
+	Bounds.prototype.overwriteWith = function(other)
+	{
+		this.min.overwriteWith(other.min);
+		this.max.overwriteWith(other.max);
 		return this;
 	}
 }

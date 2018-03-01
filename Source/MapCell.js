@@ -1,5 +1,0 @@
-
-function MapCell()
-{
-	this.bodiesPresent = [];
-}

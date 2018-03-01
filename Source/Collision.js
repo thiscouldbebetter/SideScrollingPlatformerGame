@@ -1,16 +1,15 @@
 
-function Collision(pos, distance, edgeCollidedWith, bodyCollidedWith)
+function Collision(pos, distance, collidable)
 {
 	this.pos = pos;
 	this.distance = distance;
-	this.edgeCollidedWith = edgeCollidedWith;
-	this.bodyCollidedWith = bodyCollidedWith;
+	this.collidable = collidable;
 }
 
 {
 	// static variables
 
-	Collision.bounds = 
+	Collision.bounds =
 	[
 		new Bounds(new Coords(0, 0), new Coords(0, 0)),
 		new Bounds(new Coords(0, 0), new Coords(0, 0)),
@@ -21,7 +20,7 @@ function Collision(pos, distance, edgeCollidedWith, bodyCollidedWith)
 	Collision.closestInList = function(collisionsToCheck)
 	{
 		var collisionClosest = collisionsToCheck[0];
-		
+
 		for (var i = 1; i < collisionsToCheck.length; i++)
 		{
 			var collision = collisionsToCheck[i];
@@ -46,13 +45,13 @@ function Collision(pos, distance, edgeCollidedWith, bodyCollidedWith)
 		for (var b = 0; b < bounds.length; b++)
 		{
 			var boundsThis = bounds[b];
-			var boundsOther = bounds[1 - b];			
+			var boundsOther = bounds[1 - b];
 
 			var doAllDimensionsOverlapSoFar = true;
 
 			for (var d = 0; d < Coords.NumberOfDimensions; d++)
 			{
-				if 
+				if
 				(
 					boundsThis.max.dimension(d) < boundsOther.min.dimension(d)
 					|| boundsThis.min.dimension(d) > boundsOther.max.dimension(d)
@@ -75,12 +74,12 @@ function Collision(pos, distance, edgeCollidedWith, bodyCollidedWith)
 
 	Collision.edgeWithOther = function(edge0, edge1)
 	{
-		var returnValue;
+		var returnValue = null;
 
 		var doBoundsOverlap = Collision.doBoundsOverlap
 		(
-			edge0.bounds,
-			edge1.bounds
+			edge0.bounds(),
+			edge1.bounds()
 		);
 
 		if (doBoundsOverlap == true)
@@ -90,105 +89,59 @@ function Collision(pos, distance, edgeCollidedWith, bodyCollidedWith)
 				edge1
 			);
 
-			var distanceAlongEdge0ToEdge1 = 
-				0 
-				- edge0ProjectedOntoEdge1.vertices[0].y 
-				/ edge0ProjectedOntoEdge1.direction.y;
-	
-			// Because the math's not perfect...
-			var correctionFactor = 1; 
+			var distanceAlongEdge0ToEdge1 =
+				0
+				- edge0ProjectedOntoEdge1.vertices[0].y
+				/ edge0ProjectedOntoEdge1.direction().y;
 
-			if 
+			// Because the math's not perfect...
+			var correctionFactor = 1;
+
+			if
 			(
 				distanceAlongEdge0ToEdge1 >= 0 - correctionFactor
-				&& distanceAlongEdge0ToEdge1 <= edge0.length + correctionFactor
+				&& distanceAlongEdge0ToEdge1 <= edge0.length() + correctionFactor
 			)
 			{
 				var collisionPos = edge0.vertices[0].clone().add
 				(
-					edge0.direction.clone().multiplyScalar
+					edge0.direction().clone().multiplyScalar
 					(
 						distanceAlongEdge0ToEdge1
 					)
 				);
-				
-				returnValue = new Collision
+
+				var collision = new Collision
 				(
-					collisionPos,
-					distanceAlongEdge0ToEdge1,
-					edge1,
-					null // bodyCollidedWith
+					collisionPos, distanceAlongEdge0ToEdge1
 				);
+
+				returnValue = collision;
 			}
-		}
-		else
-		{
-			returnValue = null;
 		}
 
 		return returnValue;
 	}
 
-	Collision.moverWithEdge = function(mover, edge)
+	Collision.edgeWithFace = function(edge, face)
 	{
-		var returnValue = null;
+		var returnValues = [];
 
-		if (mover.vel.dotProduct(edge.right) >= 0)
+		var faceEdges = face.edges();
+
+		for (var i = 0; i < faceEdges.length; i++)
 		{
-			var moverEdge = new Edge
-			([
-				mover.pos,
-				mover.pos.clone().add(mover.vel)
-			]);	
-
-			returnValue = Collision.edgeWithOther
+			var faceEdge = faceEdges[i];
+			var collision = Collision.edgeWithOther
 			(
-				moverEdge,
-				edge
+				edge, faceEdge
 			);
-		}
-	
-		return returnValue;
-	}
-
-	Collision.moverWithOther = function(mover0, mover1)
-	{
-		var returnValue = null;
-
-		if (mover1.name.indexOf("Edge") == 0)
-		{
-			var edges = mover1.face.edges;
-			for (var i = 0; i < edges.length; i++)
+			if (collision != null)
 			{
-				var edge = edges[i];
-				var collision = Collision.moverWithEdge(mover0, edge);
-				if (collision != null)
-				{
-					collision.bodyCollidedWith = mover1;
-					returnValue = collision;
-				}
-			}
-		}
-		else // if mover
-		{
-			var doBoundsOverlap = Collision.doBoundsOverlap
-			(
-				mover0.face.bounds,
-				mover1.face.bounds
-			);
-
-			if (doBoundsOverlap == true)
-			{
-				returnValue = new Collision
-				(
-					mover0.pos,
-					0, // distance
-					null, // edgeCollidedWith
-					mover1 // bodyCollidedWith
-				);
+				returnValues.push(collision);
 			}
 		}
 
-		return returnValue;
+		return returnValues;
 	}
 }

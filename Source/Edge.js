@@ -1,99 +1,84 @@
 
 function Edge(vertices)
 {
-this.id = Debug.idNext();
 	this.vertices = vertices;
 
-	this.defn = new BodyDefn
-	(
-		Edge.BodyDefnName // name
-	);
-
-	this.displacement = new Coords(0, 0);
-	this.direction = new Coords(0, 0);
-	this.right = new Coords(0, 0);
-	this.bounds = new Bounds(new Coords(0, 0), new Coords(0, 0));
-
-	this.recalculateDerivedValues();
+	this._bounds = new Bounds(new Coords(), new Coords());
+	this._direction = new Coords();
+	this._displacement = new Coords();
+	this._transverse = new Coords();
 }
-
 {
-	// constants
-
-	Edge.BodyDefnName = "Edge";
-	Edge.Thickness = 4;
-
-	// methods
-
-	Edge.prototype.clone = function()
+	Edge.prototype.bounds = function()
 	{
-		return new Edge
+		return this._bounds.ofPoints(this.vertices);
+	}
+
+	Edge.prototype.direction = function()
+	{
+		var displacement = this.displacement();
+		return this._direction.overwriteWith
 		(
-			[ this.vertices[0].clone(), this.vertices[1].clone() ]
+			displacement
+		).divideScalar
+		(
+			displacement.magnitude()
 		);
 	}
 
-	Edge.prototype.overwriteWith = function(other)
+	Edge.prototype.displacement = function()
 	{
-		for (var i = 0; i < this.vertices.length; i++)
-		{
-			var vertexThis = this.vertices[i];
-			var vertexOther = other.vertices[i];
-			vertexThis.overwriteWith(vertexOther);
-		}
-
-		this.recalculateDerivedValues();
-	}
-
-	Edge.prototype.projectOntoOther = function(other)
-	{
-		for (var v = 0; v < this.vertices.length; v++)
-		{
-			var vertexToProject = this.vertices[v];
-
-			vertexToProject.subtract
-			(
-				other.vertices[0]
-			).overwriteWithXY
-			(
-				vertexToProject.dotProduct(other.direction),
-				vertexToProject.dotProduct(other.right)
-			);
-		}
-
-		this.recalculateDerivedValues();
-
-		return this;
-	}
-
-	Edge.prototype.recalculateDerivedValues = function()
-	{
-		this.displacement.overwriteWith
+		return this._displacement.overwriteWith
 		(
 			this.vertices[1]
 		).subtract
 		(
 			this.vertices[0]
 		);
+	}
 
-		this.length = this.displacement.magnitude();
+	Edge.prototype.length = function()
+	{
+		return this.displacement().magnitude();
+	}
 
-		this.direction.overwriteWith
-		(
-			this.displacement
-		).divideScalar
-		(
-			this.length
-		);
+	Edge.prototype.projectOntoOther = function(other)
+	{
+		var otherVertices = other.vertices;
+		var otherVertex0 = otherVertices[0];
+		var otherDirection = other.direction();
+		var otherTransverse = other.transverse();
 
-		this.right.overwriteWith
-		(
-			this.direction
-		).right();
-	
-		this.bounds.overwriteWithBoundsOfCoordsMany
-		(
-			this.vertices
-		);
+		for (var i = 0; i < this.vertices.length; i++)
+		{
+			var vertex = this.vertices[i];
+			vertex.subtract(otherVertex0);
+			vertex.overwriteWithXY
+			(
+				vertex.dotProduct(otherDirection),
+				vertex.dotProduct(otherTransverse)
+			);
+		}
+
+		return this;
+	}
+
+	Edge.prototype.transverse = function()
+	{
+		return this._transverse.overwriteWith(this.direction()).right();
+	}
+
+	// cloneable
+
+	Edge.prototype.clone = function()
+	{
+		return new Edge(this.vertices.clone());
+	}
+
+	Edge.prototype.overwriteWith = function(other)
+	{
+		this.vertices.overwriteWith(other.vertices);
+		return this;
 	}
 }
+

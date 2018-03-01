@@ -5,33 +5,32 @@ function IntelligenceDefnPatroller()
 }
 
 {
-	IntelligenceDefnPatroller.prototype.decideActionForMover = function(intelligence, mover)
+	IntelligenceDefnPatroller.prototype.decideActionForMover = function(mover)
 	{
-		var edgeBeingStoodOn = mover.edgeBeingStoodOn;
-
-		if (edgeBeingStoodOn  != null)
+		if (mover.direction == null)
 		{
-			var extremeIndex = (intelligence.directionCurrent > 0 ? 1 : 0);
-			var edgeExtremeAhead = edgeBeingStoodOn.bounds.minAndMax[extremeIndex];
+			mover.direction = -1;
+		}
+
+		var platformBeingStoodOn = mover.platformBeingStoodOn;
+
+		if (platformBeingStoodOn != null)
+		{
+			var platformBounds = platformBeingStoodOn.collider.bounds();
+			var extremeIndex = (mover.direction > 0 ? 1 : 0);
+			var edgeExtremeAhead = platformBounds.minAndMax[extremeIndex];
 			var distanceToExtreme = Math.abs
 			(
-				edgeExtremeAhead.x
-				- mover.pos.x
+				edgeExtremeAhead.x - mover.pos.x
 			);
 
 			if (distanceToExtreme < this.distanceToExtremeMin)
 			{
-				intelligence.directionCurrent *= -1;
+				mover.direction *= -1;
 			}
-	
-			mover.vel.x += 
-				mover.defn.accelerationRun 
-				* intelligence.directionCurrent;
-		}
-	}
 
-	IntelligenceDefnPatroller.prototype.initializeIntelligence = function(intelligence)
-	{
-		intelligence.directionCurrent = 1;
+			mover.vel.x +=
+				mover.moverDefn.accelerationRun * mover.direction;
+		}
 	}
 }

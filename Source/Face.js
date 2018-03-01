@@ -1,60 +1,67 @@
 
-function Face(edges)
+function Face(vertices)
 {
-	this.edges = edges;
-	this.vertices = [];
-	for (var i = 0; i < this.edges.length; i++)
-	{
-		var edge = this.edges[i];
-		var vertex = edge.vertices[0];
-		this.vertices.push(vertex);
-	}
+	this.vertices = vertices;
 
-	if (this.edges.length == 1)
-	{
-		this.vertices.push(this.edges[0].vertices[1]);
-	}
-
-	this.bounds = new Bounds(new Coords(0, 0), new Coords(0, 0));
-
-	this.recalculateDerivedValues();
+	this._bounds = new Bounds(new Coords(), new Coords()).ofPoints(this.vertices);
+	this._edges = null;
 }
 
 {
+	Face.prototype.bounds = function()
+	{
+		return this._bounds.ofPoints(this.vertices);
+	}
+
+	Face.prototype.edges = function()
+	{
+		if (this._edges == null)
+		{
+			this._edges = [];
+
+			var vertexPrev = this.vertices[0];
+			for (var i = 1; i < this.vertices.length; i++)
+			{
+				var vertex = this.vertices[i];
+				var edge = new Edge([vertexPrev, vertex]);
+				this._edges.push(edge);
+				var vertexPrev = vertex;
+			}
+
+			var edgeFinal = new Edge([vertexPrev, this.vertices[0]]);
+			this._edges.push(edge);
+		}
+
+		return this._edges;
+	}
+
+	// cloneable
+
 	Face.prototype.clone = function()
 	{
-		return new Face(Cloneable.cloneMany(this.edges));
+		return new Face(this.vertices.clone());
 	}
 
 	Face.prototype.overwriteWith = function(other)
 	{
-		for (var e = 0; e < this.edges.length; e++)
+		for (var i = 0; i < this.vertices.length; i++)
 		{
-			var edge = this.edges[e];
-			var edgeOther = other.edges[e];
-			edge.overwriteWith(edgeOther);
+			var vertexThis = this.vertices[i];
+			var vertexOther = other.vertices[i];
+			vertexThis.overwriteWith(vertexOther);
 		}
-
-		this.recalculateDerivedValues();
 
 		return this;
 	}
 
-	Face.prototype.recalculateDerivedValues = function()
+	// transformable
+
+	Face.prototype.transform = function(transform)
 	{
-		this.bounds.overwriteWithBoundsOfCoordsMany(this.vertices);
-	}
-
-	Face.prototype.transform = function(transformToApply)
-	{
-		Transform.applyTransformToCoordsMany
-		(
-			transformToApply,
-			this.vertices
-		);
-
-		this.recalculateDerivedValues();
-
-		return this;	
+		for (var i = 0; i < this.vertices.length; i++)
+		{
+			var vertex = this.vertices[i];
+			transform.transformCoords(vertex);
+		}
 	}
 }

@@ -5,12 +5,7 @@ function IntelligenceDefnNone()
 }
 
 {
-	IntelligenceDefnNone.prototype.decideActionForMover = function(intelligence, mover)
-	{
-		// do nothing
-	}
-
-	IntelligenceDefnNone.prototype.initializeIntelligence = function(intelligence)
+	IntelligenceDefnNone.prototype.decideActionForMover = function(mover)
 	{
 		// do nothing
 	}

@@ -4,7 +4,7 @@ function TransformTranslate(displacement)
 	this.displacement = displacement;
 }
 {
-	TransformTranslate.prototype.applyToCoords = function(coordsToApplyTo)
+	TransformTranslate.prototype.transformCoords = function(coordsToApplyTo)
 	{
 		coordsToApplyTo.add(this.displacement);
 	}

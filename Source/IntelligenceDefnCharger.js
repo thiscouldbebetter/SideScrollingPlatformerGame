@@ -5,13 +5,8 @@ function IntelligenceDefnCharger()
 }
 
 {
-	IntelligenceDefnCharger.prototype.decideActionForMover = function(intelligence, mover)
+	IntelligenceDefnCharger.prototype.decideActionForMover = function(mover)
 	{
 		mover.vel.x -= mover.defn.accelerationRun;
-	}
-
-	IntelligenceDefnCharger.prototype.initializeIntelligence = function(intelligence)
-	{
-		// do nothing
 	}
 }

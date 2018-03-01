@@ -1,12 +1,12 @@
 
 function Level
 (
-	name, 
-	size, 
-	accelerationDueToGravity, 
-	velocityMin, 
-	friction, 
-	edges
+	name,
+	size,
+	accelerationDueToGravity,
+	velocityMin,
+	friction,
+	platforms
 )
 {
 	this.name = name;
@@ -14,5 +14,5 @@ function Level
 	this.accelerationDueToGravity = accelerationDueToGravity;
 	this.velocityMin = velocityMin;
 	this.friction = friction;
-	this.edges = edges;
+	this.platforms = platforms;
 }
