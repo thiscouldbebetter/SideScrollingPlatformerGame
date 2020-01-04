@@ -5,7 +5,7 @@ function VisualFace(color, face)
 	this.face = face;
 
 	this._faceTransformed = this.face.clone();
-	this._transform = new TransformTranslate(new Coords());
+	this._transform = new Transform_Translate(new Coords());
 }
 {
 	VisualFace.prototype.draw = function(display, levelRun, drawable)

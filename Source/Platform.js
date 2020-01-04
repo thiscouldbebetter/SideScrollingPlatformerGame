@@ -25,7 +25,7 @@ function Platform(vertices)
 		(
 			this.vertices.clone()
 		);
-	}
+	};
 
 	Platform.prototype.overwriteWith = function(other)
 	{
@@ -37,12 +37,12 @@ function Platform(vertices)
 		}
 
 		return this;
-	}
+	};
 
 	// drawing
 
 	Platform.prototype.draw = function(display, levelRun)
 	{
 		this.visual.draw(display, levelRun, this);
-	}
+	};
 }

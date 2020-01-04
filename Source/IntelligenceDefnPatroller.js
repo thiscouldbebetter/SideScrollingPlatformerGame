@@ -16,9 +16,8 @@ function IntelligenceDefnPatroller()
 
 		if (platformBeingStoodOn != null)
 		{
-			var platformBounds = platformBeingStoodOn.collider.bounds();
-			var extremeIndex = (mover.direction > 0 ? 1 : 0);
-			var edgeExtremeAhead = platformBounds.minAndMax[extremeIndex];
+			var platformBounds = platformBeingStoodOn.collider.box();
+			var edgeExtremeAhead = (mover.direction > 0 ? platformBounds.max() : platformBounds.min() );
 			var distanceToExtreme = Math.abs
 			(
 				edgeExtremeAhead.x - mover.pos.x
