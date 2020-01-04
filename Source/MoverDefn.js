@@ -8,7 +8,7 @@ function MoverDefn
 	velocityMaxFlying,
 	intelligence
 )
-{	
+{
 	this.accelerationRun = accelerationRun;
 	this.accelerationFly = accelerationFly;
 	this.velocityMaxRunning = velocityMaxRunning;

@@ -7,6 +7,6 @@ function IntelligenceDefnCharger()
 {
 	IntelligenceDefnCharger.prototype.decideActionForMover = function(mover)
 	{
-		mover.vel.x -= mover.defn.accelerationRun;
+		mover.Locatable.loc.vel.x -= mover.defn.accelerationRun;
 	}
 }

@@ -15,8 +15,13 @@ function Globals()
 		this.display = display;
 		this.display.initialize();
 
+		var universe = {};
+		universe.display = display;
+		universe.platformHelper = new PlatformHelper();
+		universe.platformHelper.initialize(universe);
+
 		this.inputHelper = new InputHelper();
-		this.inputHelper.initialize();
+		this.inputHelper.initialize(universe);
 
 		this.levelRun = levelRun;
 

@@ -9,7 +9,11 @@ function LevelRun(level, camera, bodies)
 	for (var i = 0; i < this.platforms.length; i++)
 	{
 		var platform = this.platforms[i];
-		platform.visual = new VisualCamera(this.camera, platform.visual);
+		var platformDrawable = platform.Drawable;
+		platformDrawable.visual = new VisualCamera
+		(
+			platformDrawable.visual, () => camera
+		);
 	}
 
 	this.bodyForPlayer = this.bodies[0];
@@ -61,11 +65,13 @@ function LevelRun(level, camera, bodies)
 		{
 			var mover = this.bodies[i];
 
-			var moverCollider = mover.collider;
-			transformTranslate.displacement.overwriteWith(mover.pos);
+			var moverCollidable = mover.Collidable;
+			var moverCollider = moverCollidable.collider;
+			var moverPos = mover.Locatable.loc.pos;
+			transformTranslate.displacement.overwriteWith(moverPos);
 			moverCollider.overwriteWith
 			(
-				mover.defn.collider
+				moverCollidable.colliderAtRest
 			).transform
 			(
 				transformTranslate
@@ -85,7 +91,7 @@ function LevelRun(level, camera, bodies)
 
 				this.updateForTimerTick_Physics_Bodies_PosAndVel(mover);
 
-				if (mover.integrity > 0)
+				if (mover.Killable.integrity > 0)
 				{
 					this.updateForTimerTick_Physics_Bodies_Live(mover);
 				}
@@ -98,19 +104,23 @@ function LevelRun(level, camera, bodies)
 	LevelRun.prototype.updateForTimerTick_Physics_Bodies_PosAndVel = function(mover)
 	{
 		var transformTranslate = this._transformTranslate;
-		transformTranslate.displacement.overwriteWith(mover.pos);
+		var moverLoc = mover.Locatable.loc;
+		var moverPos = moverLoc.pos;
+		transformTranslate.displacement.overwriteWith(moverPos);
 
-		var moverCollider = mover.collider;
+		var moverCollidable = mover.Collidable;
+		var moverCollider = moverCollidable.collider;
 		moverCollider.overwriteWith
 		(
-			mover.defn.collider
+			moverCollidable.colliderAtRest
 		).transform
 		(
 			transformTranslate
 		);
-		var moverBounds = mover.collider.box();
+		var moverBounds = moverCollider.box();
 
-		mover.vel.add
+		var moverVel = moverLoc.vel;
+		moverVel.add
 		(
 			this.level.accelerationDueToGravity
 		).trimToMagnitudeMax
@@ -133,7 +143,7 @@ function LevelRun(level, camera, bodies)
 
 		if (mover == this.bodyForPlayer)
 		{
-			this.updateForTimerTick_Physics_Bodies_Live_4_Player(mover);
+			this.updateForTimerTick_Physics_Bodies_Live_Player(mover);
 		}
 	};
 
@@ -144,7 +154,8 @@ function LevelRun(level, camera, bodies)
 			var platform = mover.platformBeingStoodOn;
 			var platformTangent = platform.edge.direction();
 
-			var moverVel = mover.vel;
+			var moverLoc = mover.Locatable.loc;
+			var moverVel = moverLoc.vel;
 			var moverVelAlongPlatform = moverVel.dotProduct(platformTangent);
 
 			var accelerationAlongEdge = platformTangent.clone().multiplyScalar
@@ -165,10 +176,13 @@ function LevelRun(level, camera, bodies)
 	{
 		var collisionsWithPlatforms = [];
 
+		var moverLoc = mover.Locatable.loc;
+		var moverEdgeVertex0 = moverLoc.pos.clone();
+		moverEdgeVertex0.y -= 1; // hack
 		var moverEdge = new Edge
 		([
-			mover.pos.clone().subtract(mover.vel), // hack
-			mover.pos.clone().add(mover.vel)
+			moverEdgeVertex0,
+			moverEdgeVertex0.clone().add(moverLoc.vel)
 		]);
 
 		var movementBounds = moverEdge.box();
@@ -178,7 +192,7 @@ function LevelRun(level, camera, bodies)
 		for (var p = 0; p < platforms.length; p++)
 		{
 			var platform = platforms[p];
-			var platformCollider = platform.collider;
+			var platformCollider = platform.Collidable.collider;
 			var platformBounds = platformCollider.box();
 			if (platformBounds.overlapsWith(movementBounds))
 			{
@@ -212,14 +226,23 @@ function LevelRun(level, camera, bodies)
 		{
 			var platformCollidedWith = collisionClosest.collidable;
 			mover.platformBeingStoodOn = platformCollidedWith;
-			mover.pos.y = collisionClosest.pos.y;
-			mover.vel.y = 0;
+
+			var moverLoc = mover.Locatable.loc;
+			moverLoc.pos.y = collisionClosest.pos.y;
+
+			var moverVel = moverLoc.vel;
+			var platformNormal = platformCollidedWith.edge.direction().clone().right().invert();
+			var moverSpeedAlongNormal = moverVel.dotProduct(platformNormal);
+			moverVel.subtract
+			(
+				platformNormal.multiplyScalar(moverSpeedAlongNormal)
+			);
 		}
 	};
 
-	LevelRun.prototype.updateForTimerTick_Physics_Bodies_Live_4_Player = function(mover)
+	LevelRun.prototype.updateForTimerTick_Physics_Bodies_Live_Player = function(mover)
 	{
-		var moverCollider = mover.collider;
+		var moverCollider = mover.Collidable.collider;
 		var moverBounds = moverCollider.box();
 
 		for (var j = 0; j < this.bodies.length; j++)
@@ -227,7 +250,7 @@ function LevelRun(level, camera, bodies)
 			var moverOther = this.bodies[j];
 			if (moverOther != mover)
 			{
-				var moverOtherCollider = moverOther.collider;
+				var moverOtherCollider = moverOther.Collidable.collider;
 				var moverOtherBounds = moverOtherCollider.box();
 
 				var doMoverBoundsCollide = moverBounds.overlapsWith
@@ -237,15 +260,16 @@ function LevelRun(level, camera, bodies)
 
 				if (doMoverBoundsCollide)
 				{
-					if (mover.vel.y > 0)
+					var moverVel = mover.Locatable.loc.vel;
+					if (moverVel.y > 0)
 					{
-						moverOther.integrity = 0;
-						mover.vel.y *= -1;
+						moverOther.Killable.integrity = 0;
+						moverVel.y *= -1;
 					}
 					else
 					{
-						mover.integrity = 0;
-						mover.vel.y =
+						mover.Killable.integrity = 0;
+						moverVel.y =
 							0 - this.level.accelerationDueToGravity.y;
 					}
 				}
@@ -255,9 +279,11 @@ function LevelRun(level, camera, bodies)
 
 	LevelRun.prototype.updateForTimerTick_Physics_Bodies_MoveAndCheckBounds = function(mover)
 	{
-		mover.pos.add(mover.vel);
+		var moverLoc = mover.Locatable.loc;
+		var moverPos = moverLoc.pos;
+		moverPos.add(moverLoc.vel);
 
-		if (mover.pos.y >= this.level.size.y * 2)
+		if (moverPos.y >= this.level.size.y * 2)
 		{
 			this.bodiesToRemove.push(mover);
 		}
@@ -268,11 +294,7 @@ function LevelRun(level, camera, bodies)
 		for (var i = 0; i < this.bodiesToRemove.length; i++)
 		{
 			var body = this.bodiesToRemove[i];
-			this.bodies.splice
-			(
-				this.bodies.indexOf(body),
-				1
-			);
+			this.bodies.remove(body);
 		}
 
 		this.bodiesToRemove.length = 0;
@@ -280,12 +302,13 @@ function LevelRun(level, camera, bodies)
 
 	LevelRun.prototype.updateForTimerTick_WinOrLose = function()
 	{
-		if (this.bodyForPlayer.pos.y >= this.level.size.y * 2)
+		var playerPos = this.bodyForPlayer.Locatable.loc.pos;
+		if (playerPos.y >= this.level.size.y * 2)
 		{
 			document.write("Game Over");
 			Globals.Instance.finalize();
 		}
-		else if (this.bodyForPlayer.pos.x >= this.level.size.x)
+		else if (playerPos.x >= this.level.size.x)
 		{
 			document.write("You win!");
 			Globals.Instance.finalize();
@@ -296,9 +319,9 @@ function LevelRun(level, camera, bodies)
 
 	LevelRun.prototype.draw = function(display)
 	{
-		this.camera.pos.overwriteWith
+		this.camera.loc.pos.overwriteWith
 		(
-			this.bodyForPlayer.pos
+			this.bodyForPlayer.Locatable.loc.pos
 		).trimToRangeMinMax
 		(
 			this.camera.viewSizeHalf,
@@ -309,18 +332,19 @@ function LevelRun(level, camera, bodies)
 		);
 
 		display.clear();
+		display.drawRectangle(new Coords(0, 0), this.camera.viewSize, "White", "LightGray");
 
 		var platforms = this.platforms;
 		for (var i = 0; i < platforms.length; i++)
 		{
 			var platform = platforms[i];
-			platform.draw(display, this);
+			platform.draw(display);
 		}
 
 		for (var i = 0; i < this.bodies.length; i++)
 		{
 			var body = this.bodies[i];
-			body.draw(display, this);
+			body.draw(display);
 		}
 	}
 

@@ -1,23 +1,10 @@
 
-function Display(viewSize)
+function DisplayExtensions(viewSize)
 {
-	this.viewSize = viewSize;
-	this.viewSizeHalf = this.viewSize.clone().divideScalar(2);
-
-	this.colorFore = "LightGray";
-	this.colorBack = "White"
+	// Extension class.
 }
 
 {
-	Display.prototype.clear = function()
-	{
-		this.drawRectangle
-		(
-			Coords.Instances().Zeroes, this.viewSize,
-			this.colorBack, this.colorFore
-		);
-	}
-
 	Display.prototype.drawBounds = function(bounds, cameraPos)
 	{
 		var drawPos = this.drawPos.overwriteWith
@@ -44,7 +31,7 @@ function Display(viewSize)
 			drawSize.x,
 			drawSize.y
 		);
-	}
+	};
 
 	Display.prototype.drawFace = function(face, colorFill, colorBorder)
 	{
@@ -61,7 +48,7 @@ function Display(viewSize)
 			this.graphics.strokeStyle = colorBorder;
 			this.graphics.stroke();
 		}
-	}
+	};
 
 	Display.prototype.drawFace_Path = function(face)
 	{
@@ -89,35 +76,5 @@ function Display(viewSize)
 		this.graphics.moveTo(startPos.x, startPos.y);
 		this.graphics.lineTo(endPos.x, endPos.y);
 		this.graphics.stroke();
-	}
-
-	Display.prototype.drawRectangle = function(pos, size, colorFill, colorBorder)
-	{
-		if (colorFill != null)
-		{
-			this.graphics.fillStyle = colorFill;
-			this.graphics.fillRect(pos.x, pos.y, size.x, size.y);
-		}
-
-		if (colorBorder != null)
-		{
-			this.graphics.strokeStyle = colorBorder;
-			this.graphics.strokeRect(pos.x, pos.y, size.x, size.y);
-		}
-	}
-
-	Display.prototype.initialize = function()
-	{
-		var canvas = document.createElement("canvas");
-		canvas.width = this.viewSize.x;
-		canvas.height = this.viewSize.y;
-
-		this.graphics = canvas.getContext("2d");
-
-		document.getElementById("divMain").appendChild(canvas);
-
-		this.drawPos = new Coords(0, 0);
-		this.drawPos2 = new Coords(0, 0);
-		this.drawSize = new Coords(0, 0);
-	}
+	};
 }

@@ -3,17 +3,21 @@ function Platform(vertices)
 {
 	this.vertices = vertices;
 
-	this.pos = new Coords(0, 0); // hack
+	var pos = new Coords(0, 0); // hack
+	var loc = new Location(pos);
+	this.Locatable = new Locatable(loc);
 
 	this.edge = new Edge(vertices);
 	this.face = new Face(vertices);
 
-	this.collider = this.face;
+	var collider = this.face;
+	this.Collidable = new Collidable(collider);
 
-	this.visual = new VisualFace
+	var visual = new VisualFace
 	(
 		"LightGray", this.face
 	);
+	this.Drawable = new Drawable(visual);
 }
 
 {
@@ -41,8 +45,14 @@ function Platform(vertices)
 
 	// drawing
 
-	Platform.prototype.draw = function(display, levelRun)
+	Platform.prototype.draw = function(display)
 	{
-		this.visual.draw(display, levelRun, this);
+		this.Drawable.visual.draw
+		(
+			null, null, // universe, world, 
+			display, 
+			null, // drawable
+			this
+		);
 	};
 }

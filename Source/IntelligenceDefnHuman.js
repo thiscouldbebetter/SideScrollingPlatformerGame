@@ -10,17 +10,25 @@ function IntelligenceDefnHuman()
 		var moverDefn = mover.moverDefn;
 
 		var inputHelper = Globals.Instance.inputHelper;
+		var inputsPressed = inputHelper.inputsPressed;
 
-		for (var key in inputHelper.keysPressed)
+		for (var i = 0; i < inputsPressed.length; i++)
 		{
-			if ( key == " " || key == "w" )
+			var key = inputsPressed[i].name;
+
+			if (key.startsWith("Mouse"))
+			{
+				// Ignore it for now.
+			}
+			else if ( key == "_" || key == "w" )
 			{
 				if (mover.platformBeingStoodOn != null)
 				{
 					mover.platformBeingStoodOn = null;
-					mover.vel.y -= moverDefn.accelerationJump;
-					mover.pos.y -= 1;
-					delete inputHelper.keysPressed[key];
+					var moverLoc = mover.Locatable.loc;
+					moverLoc.vel.y -= moverDefn.accelerationJump;
+					moverLoc.pos.y -= 1;
+					inputHelper.inputRemove(key);
 				}
 			}
 			else if (key == "a" || key == "d")
@@ -41,7 +49,7 @@ function IntelligenceDefnHuman()
 					acceleration *= -1;
 				}
 
-				mover.vel.x += acceleration;
+				mover.Locatable.loc.vel.x += acceleration;
 			}
 		}
 	}

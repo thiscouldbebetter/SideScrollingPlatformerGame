@@ -7,6 +7,8 @@ function IntelligenceDefnPatroller()
 {
 	IntelligenceDefnPatroller.prototype.decideActionForMover = function(mover)
 	{
+		var moverLoc = mover.Locatable.loc;
+
 		if (mover.direction == null)
 		{
 			mover.direction = -1;
@@ -16,11 +18,11 @@ function IntelligenceDefnPatroller()
 
 		if (platformBeingStoodOn != null)
 		{
-			var platformBounds = platformBeingStoodOn.collider.box();
+			var platformBounds = platformBeingStoodOn.Collidable.collider.box();
 			var edgeExtremeAhead = (mover.direction > 0 ? platformBounds.max() : platformBounds.min() );
 			var distanceToExtreme = Math.abs
 			(
-				edgeExtremeAhead.x - mover.pos.x
+				edgeExtremeAhead.x - moverLoc.pos.x
 			);
 
 			if (distanceToExtreme < this.distanceToExtremeMin)
@@ -28,7 +30,7 @@ function IntelligenceDefnPatroller()
 				mover.direction *= -1;
 			}
 
-			mover.vel.x +=
+			moverLoc.vel.x +=
 				mover.moverDefn.accelerationRun * mover.direction;
 		}
 	}

@@ -1,8 +1,8 @@
 
-function Camera(pos, viewSize)
+function Camera(viewSize, focalLength, loc)
 {
-	this.pos = pos;
 	this.viewSize = viewSize;
+	this.loc = loc;
 
 	this.viewSizeHalf = this.viewSize.clone().divideScalar(2);
 }

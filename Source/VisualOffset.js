@@ -7,13 +7,13 @@ function VisualOffset(offset, child)
 	this._posToRestore = new Coords();
 }
 {
-	VisualOffset.prototype.draw = function(display, levelRun, drawable)
+	VisualOffset.prototype.draw = function(universe, world, display, drawable, entity)
 	{
-		var drawablePos = drawable.pos;
+		var drawablePos = entity.Locatable.loc.pos;
 		this._posToRestore.overwriteWith(drawablePos);
 
 		drawablePos.add(this.offset);
-		this.child.draw(display, levelRun, drawable);
+		this.child.draw(universe, world, display, drawable, entity);
 
 		drawablePos.overwriteWith(this._posToRestore);
 	}

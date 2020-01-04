@@ -1,19 +1,20 @@
 
-function VisualCamera(camera, child)
+function VisualCamera(child, cameraFactory)
 {
-	this.camera = camera;
 	this.child = child;
-	
+	this.cameraFactory = cameraFactory;
+
 	this._posToRestore = new Coords();
 }
 {
-	VisualCamera.prototype.draw = function(display, levelRun, drawable)
+	VisualCamera.prototype.draw = function(universe, world, display, drawable, entity)
 	{
-		var drawablePos = drawable.pos;
+		var drawablePos = entity.Locatable.loc.pos;
 		this._posToRestore.overwriteWith(drawablePos);
 		
-		drawablePos.subtract(this.camera.pos).add(this.camera.viewSizeHalf);
-		this.child.draw(display, levelRun, drawable);
+		var camera = this.cameraFactory();
+		drawablePos.subtract(camera.loc.pos).add(camera.viewSizeHalf);
+		this.child.draw(universe, world, display, drawable, entity);
 		
 		drawablePos.overwriteWith(this._posToRestore);
 	}

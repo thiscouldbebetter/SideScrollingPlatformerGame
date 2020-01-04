@@ -8,9 +8,10 @@ function VisualFace(color, face)
 	this._transform = new Transform_Translate(new Coords());
 }
 {
-	VisualFace.prototype.draw = function(display, levelRun, drawable)
+	VisualFace.prototype.draw = function(universe, world, display, drawable, entity)
 	{
-		this._transform.displacement.overwriteWith(drawable.pos);
+		var drawablePos = entity.Locatable.loc.pos;
+		this._transform.displacement.overwriteWith(drawablePos);
 
 		this._faceTransformed.overwriteWith
 		(

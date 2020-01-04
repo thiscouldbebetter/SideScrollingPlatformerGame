@@ -2,8 +2,8 @@ function main()
 {
 	var display = new Display
 	(
-		new Coords(100, 100) // viewSize
-	);
+		[ new Coords(100, 100) ] // viewSize
+	).initialize();
 
 	var level = new Level
 	(
@@ -30,8 +30,9 @@ function main()
 
 	var camera = new Camera
 	(
-		display.viewSize.clone().divideScalar(2), // pos
-		display.viewSize // size
+		display.sizeInPixels.clone(), // size
+		null, // focalLength
+		new Location(display.sizeInPixels.clone().half())
 	);
 
 	var facePlayer = new Face
@@ -43,7 +44,7 @@ function main()
 	(
 		"Player",
 		facePlayer, // collider
-		new VisualCamera(camera, new VisualFace("LightGray", facePlayer))
+		new VisualCamera(new VisualFace("LightGray", facePlayer), () => camera)
 	);
 
 	var moverDefnPlayer = new MoverDefn
@@ -76,7 +77,7 @@ function main()
 	(
 		"Enemy",
 		faceEnemy, // collider
-		new VisualCamera(camera, new VisualFace("LightGray", faceEnemy))
+		new VisualCamera(new VisualFace("LightGray", faceEnemy), () => camera)
 	);
 
 	var moverDefnEnemy = new MoverDefn
@@ -131,5 +132,7 @@ function main()
 	(
 		display,
 		levelRun
-	)
+	);
+
+	document.getElementById("divMain").appendChild(display.canvas);
 }
