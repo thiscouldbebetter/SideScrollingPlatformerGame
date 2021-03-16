@@ -1,11 +1,9 @@
 
-function DisplayExtensions(viewSize)
+function DisplayExtensions()
 {
-	// Extension class.
 }
-
 {
-	Display.prototype.drawBounds = function(bounds, cameraPos)
+	Display2D.prototype.drawBounds = function(bounds, cameraPos)
 	{
 		var drawPos = this.drawPos.overwriteWith
 		(
@@ -23,7 +21,7 @@ function DisplayExtensions(viewSize)
 			bounds.min
 		);
 
-		this.graphics.strokeStyle = "LightGray";
+		this.graphics.strokeStyle = "Gray";
 		this.graphics.strokeRect
 		(
 			drawPos.x,
@@ -31,9 +29,9 @@ function DisplayExtensions(viewSize)
 			drawSize.x,
 			drawSize.y
 		);
-	};
+	}
 
-	Display.prototype.drawFace = function(face, colorFill, colorBorder)
+	Display2D.prototype.drawFace = function(face, colorFill, colorBorder)
 	{
 		this.drawFace_Path(face);
 
@@ -48,9 +46,9 @@ function DisplayExtensions(viewSize)
 			this.graphics.strokeStyle = colorBorder;
 			this.graphics.stroke();
 		}
-	};
+	}
 
-	Display.prototype.drawFace_Path = function(face)
+	Display2D.prototype.drawFace_Path = function(face)
 	{
 		this.graphics.beginPath();
 		var vertices = face.vertices;
@@ -64,7 +62,7 @@ function DisplayExtensions(viewSize)
 		this.graphics.closePath();
 	}
 
-	Display.prototype.drawLine = function(startPos, endPos, color)
+	Display2D.prototype.drawLine = function(startPos, endPos, color)
 	{
 		if (color == null)
 		{
@@ -76,5 +74,5 @@ function DisplayExtensions(viewSize)
 		this.graphics.moveTo(startPos.x, startPos.y);
 		this.graphics.lineTo(endPos.x, endPos.y);
 		this.graphics.stroke();
-	};
+	}
 }

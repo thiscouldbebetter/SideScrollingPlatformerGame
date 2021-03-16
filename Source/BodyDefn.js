@@ -1,7 +1,10 @@
 
-function BodyDefn(name, collider, visual)
+class BodyDefn
 {
-	this.name = name;
-	this.collider = collider;
-	this.visual = visual;
+	constructor(name, collider, visual)
+	{
+		this.name = name;
+		this.collider = collider;
+		this.visual = visual;
+	}
 }

@@ -1,34 +1,37 @@
 
-function LevelRun(level, camera, bodies)
+class LevelRun
 {
-	this.level = level;
-	this.camera = camera;
-	this.bodies = bodies;
-
-	this.platforms = this.level.platforms.clone();
-	for (var i = 0; i < this.platforms.length; i++)
+	constructor(level, camera, bodies)
 	{
-		var platform = this.platforms[i];
-		var platformDrawable = platform.Drawable;
-		platformDrawable.visual = new VisualCamera
-		(
-			platformDrawable.visual, () => camera
-		);
+		this.level = level;
+		this.camera = camera;
+		this.bodies = bodies;
+
+		this.platforms = this.level.platforms.clone();
+		for (var i = 0; i < this.platforms.length; i++)
+		{
+			var platform = this.platforms[i];
+			var platformDrawable = platform.Drawable;
+			platformDrawable.visual = new VisualCamera
+			(
+				platformDrawable.visual, () => camera
+			);
+		}
+
+		this.bodyForPlayer = this.bodies[0];
+
+		this.bodiesToRemove = [];
+
+		this.collisionHelper = new CollisionHelper();
+
+		this.epsilon = 0.001;
+
+		// Helper variables.
+
+		this._transformTranslate = new Transform_Translate(new Coords());
 	}
 
-	this.bodyForPlayer = this.bodies[0];
-
-	this.bodiesToRemove = [];
-
-	this.collisionHelper = new CollisionHelper();
-
-	// Helper variables.
-
-	this._transformTranslate = new Transform_Translate(new Coords());
-}
-
-{
-	LevelRun.prototype.updateForTimerTick = function()
+	updateForTimerTick()
 	{
 		this.updateForTimerTick_Intelligence();
 		this.updateForTimerTick_Physics();
@@ -36,7 +39,7 @@ function LevelRun(level, camera, bodies)
 		this.draw(Globals.Instance.display);
 	}
 
-	LevelRun.prototype.updateForTimerTick_Intelligence = function()
+	updateForTimerTick_Intelligence()
 	{
 		for (var m = 0; m < this.bodies.length; m++)
 		{
@@ -48,16 +51,16 @@ function LevelRun(level, camera, bodies)
 				intelligence.decideActionForMover(body);
 			}
 		}
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics = function()
+	updateForTimerTick_Physics()
 	{
 		this.updateForTimerTick_Physics_ResetColliders();
 		this.updateForTimerTick_Physics_Bodies();
 		this.updateForTimerTick_Physics_Removes();
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_ResetColliders = function()
+	updateForTimerTick_Physics_ResetColliders()
 	{
 		var transformTranslate = this._transformTranslate;
 
@@ -77,9 +80,9 @@ function LevelRun(level, camera, bodies)
 				transformTranslate
 			);
 		}
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_Bodies = function()
+	updateForTimerTick_Physics_Bodies()
 	{
 		for (var i = 0; i < this.bodies.length; i++)
 		{
@@ -99,9 +102,9 @@ function LevelRun(level, camera, bodies)
 				this.updateForTimerTick_Physics_Bodies_MoveAndCheckBounds(mover);
 			}
 		}
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_Bodies_PosAndVel = function(mover)
+	updateForTimerTick_Physics_Bodies_PosAndVel(mover)
 	{
 		var transformTranslate = this._transformTranslate;
 		var moverLoc = mover.Locatable.loc;
@@ -127,9 +130,9 @@ function LevelRun(level, camera, bodies)
 		(
 			mover.defn.velocityMaxFlying
 		);
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_Bodies_Live = function(mover)
+	updateForTimerTick_Physics_Bodies_Live(mover)
 	{
 		this.updateForTimerTick_Physics_Bodies_Live_Friction(mover);
 
@@ -145,9 +148,9 @@ function LevelRun(level, camera, bodies)
 		{
 			this.updateForTimerTick_Physics_Bodies_Live_Player(mover);
 		}
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_Bodies_Live_Friction = function(mover)
+	updateForTimerTick_Physics_Bodies_Live_Friction(mover)
 	{
 		if (mover.platformBeingStoodOn != null)
 		{
@@ -170,9 +173,9 @@ function LevelRun(level, camera, bodies)
 				moverVel.clear();
 			}
 		}
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_Bodies_Live_CollisionsWithPlatforms = function(mover)
+	updateForTimerTick_Physics_Bodies_Live_CollisionsWithPlatforms(mover)
 	{
 		var collisionsWithPlatforms = [];
 
@@ -194,7 +197,7 @@ function LevelRun(level, camera, bodies)
 			var platform = platforms[p];
 			var platformCollider = platform.Collidable.collider;
 			var platformBounds = platformCollider.box();
-			if (platformBounds.overlapsWith(movementBounds))
+			if (platformBounds.overlapsWithXY(movementBounds))
 			{
 				var platformEdges = platformCollider.edges();
 
@@ -215,9 +218,12 @@ function LevelRun(level, camera, bodies)
 		}
 
 		return collisionsWithPlatforms;
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_Bodies_Live_ClosestCollision = function(mover, collisionsWithPlatforms)
+	updateForTimerTick_Physics_Bodies_Live_ClosestCollision
+	(
+		mover, collisionsWithPlatforms
+	)
 	{
 		var collisionClosest =
 			this.collisionHelper.collisionClosest(collisionsWithPlatforms);
@@ -231,53 +237,65 @@ function LevelRun(level, camera, bodies)
 			moverLoc.pos.y = collisionClosest.pos.y;
 
 			var moverVel = moverLoc.vel;
-			var platformNormal = platformCollidedWith.edge.direction().clone().right().invert();
-			var moverSpeedAlongNormal = moverVel.dotProduct(platformNormal);
+			var platformNormal =
+				platformCollidedWith.edge.direction().clone().right().invert();
+
+			var moverSpeedAlongNormal =
+				moverVel.dotProduct(platformNormal)
+				+ this.epsilon; // Keep just above the platform, or collision calculation fails on next tick.
+
 			moverVel.subtract
 			(
 				platformNormal.multiplyScalar(moverSpeedAlongNormal)
 			);
 		}
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_Bodies_Live_Player = function(mover)
+	updateForTimerTick_Physics_Bodies_Live_Player(moverPlayer)
 	{
-		var moverCollider = mover.Collidable.collider;
-		var moverBounds = moverCollider.box();
+		var moverPlayerCollider = moverPlayer.Collidable.collider;
+		var moverPlayerBounds = moverPlayerCollider.box();
+		var moverPlayerKillable = moverPlayer.Killable;
 
 		for (var j = 0; j < this.bodies.length; j++)
 		{
 			var moverOther = this.bodies[j];
-			if (moverOther != mover)
+			var moverOtherKillable = moverOther.Killable;
+			if
+			(
+				moverOther != moverPlayer
+				&& moverOtherKillable.integrity > 0
+				&& moverPlayerKillable.integrity > 0
+			)
 			{
 				var moverOtherCollider = moverOther.Collidable.collider;
 				var moverOtherBounds = moverOtherCollider.box();
 
-				var doMoverBoundsCollide = moverBounds.overlapsWith
+				var doMoverBoundsCollide = moverPlayerBounds.overlapsWithXY
 				(
 					moverOtherBounds
 				);
 
 				if (doMoverBoundsCollide)
 				{
-					var moverVel = mover.Locatable.loc.vel;
-					if (moverVel.y > 0)
+					var moverPlayerVel = moverPlayer.Locatable.loc.vel;
+					if (moverPlayerVel.y > moverOther.Locatable.loc.vel.y)
 					{
-						moverOther.Killable.integrity = 0;
-						moverVel.y *= -1;
+						moverOtherKillable.integrity = 0;
+						moverPlayerVel.y *= -1;
 					}
 					else
 					{
-						mover.Killable.integrity = 0;
-						moverVel.y =
+						moverPlayer.Killable.integrity = 0;
+						moverPlayerVel.y =
 							0 - this.level.accelerationDueToGravity.y;
 					}
 				}
 			}
 		}
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_Bodies_MoveAndCheckBounds = function(mover)
+	updateForTimerTick_Physics_Bodies_MoveAndCheckBounds(mover)
 	{
 		var moverLoc = mover.Locatable.loc;
 		var moverPos = moverLoc.pos;
@@ -287,9 +305,9 @@ function LevelRun(level, camera, bodies)
 		{
 			this.bodiesToRemove.push(mover);
 		}
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_Physics_Removes = function()
+	updateForTimerTick_Physics_Removes()
 	{
 		for (var i = 0; i < this.bodiesToRemove.length; i++)
 		{
@@ -298,9 +316,9 @@ function LevelRun(level, camera, bodies)
 		}
 
 		this.bodiesToRemove.length = 0;
-	};
+	}
 
-	LevelRun.prototype.updateForTimerTick_WinOrLose = function()
+	updateForTimerTick_WinOrLose()
 	{
 		var playerPos = this.bodyForPlayer.Locatable.loc.pos;
 		if (playerPos.y >= this.level.size.y * 2)
@@ -317,7 +335,7 @@ function LevelRun(level, camera, bodies)
 
 	// draw
 
-	LevelRun.prototype.draw = function(display)
+	draw(display)
 	{
 		this.camera.loc.pos.overwriteWith
 		(
@@ -332,7 +350,7 @@ function LevelRun(level, camera, bodies)
 		);
 
 		display.clear();
-		display.drawRectangle(new Coords(0, 0), this.camera.viewSize, "White", "LightGray");
+		display.drawRectangle(new Coords(0, 0), this.camera.viewSize, "White", "Gray");
 
 		var platforms = this.platforms;
 		for (var i = 0; i < platforms.length; i++)

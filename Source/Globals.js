@@ -1,16 +1,15 @@
 
-function Globals()
-{}
+class Globals
 {
-	Globals.Instance = new Globals();
+	static Instance = new Globals();
 
-	Globals.prototype.handleEventTimerTick = function()
+	handleEventTimerTick()
 	{
 		this.inputHelper.updateForTimerTick();
 		this.levelRun.updateForTimerTick();
 	}
 
-	Globals.prototype.initialize = function(display, levelRun)
+	initialize(display, levelRun)
 	{
 		this.display = display;
 		this.display.initialize();
@@ -34,7 +33,7 @@ function Globals()
 		);
 	}
 
-	Globals.prototype.finalize = function()
+	finalize()
 	{
 		clearInterval(this.timer);
 	}

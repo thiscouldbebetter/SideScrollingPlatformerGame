@@ -1,37 +1,47 @@
 
-function Platform(vertices)
+class Platform
 {
-	this.vertices = vertices;
+	constructor(vertices)
+	{
+		this.vertices = vertices;
 
-	var pos = new Coords(0, 0); // hack
-	var loc = new Location(pos);
-	this.Locatable = new Locatable(loc);
+		var pos = new Coords(0, 0); // hack
+		var loc = new Disposition(pos);
+		this.Locatable = new Locatable(loc);
 
-	this.edge = new Edge(vertices);
-	this.face = new Face(vertices);
+		this.edge = new Edge(vertices);
+		this.face = new Face(vertices);
 
-	var collider = this.face;
-	this.Collidable = new Collidable(collider);
+		var collider = this.face;
+		this.Collidable = new Collidable
+		(
+			null, // ticksToWaitBetweenCollisions
+			collider, // colliderAtRest
+			/*
+			[ Body.name ], //entityPropertyNamesToCollideWith,
+			(e0, e1) => // collideEntities
+			{
+				var todo = "todo";
+			}
+			*/
+		);
 
-	var visual = new VisualFace
-	(
-		"LightGray", this.face
-	);
-	this.Drawable = new Drawable(visual);
-}
+		var visual = new VisualFace
+		(
+			"Gray", this.face
+		);
+		this.Drawable = new Drawable(visual);
+	}
 
-{
-	// methods
-
-	Platform.prototype.clone = function()
+	clone()
 	{
 		return new Platform
 		(
 			this.vertices.clone()
 		);
-	};
+	}
 
-	Platform.prototype.overwriteWith = function(other)
+	overwriteWith(other)
 	{
 		for (var i = 0; i < this.vertices.length; i++)
 		{
@@ -41,11 +51,11 @@ function Platform(vertices)
 		}
 
 		return this;
-	};
+	}
 
 	// drawing
 
-	Platform.prototype.draw = function(display)
+	draw(display)
 	{
 		this.Drawable.visual.draw
 		(
@@ -54,5 +64,5 @@ function Platform(vertices)
 			null, // drawable
 			this
 		);
-	};
+	}
 }

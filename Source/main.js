@@ -1,6 +1,7 @@
+
 function main()
 {
-	var display = new Display
+	var display = new Display2D
 	(
 		[ new Coords(100, 100) ] // viewSize
 	).initialize();
@@ -11,7 +12,7 @@ function main()
 		new Coords(300, 100), // size
 		new Coords(0, 1), // accelerationDueToGravity
 		.15, // velocityMin
-		.4, // friction
+		.35, // friction
 		// platforms
 		[
 			new Platform( [ new Coords(5, 50), new Coords(25, 50) ] ),
@@ -32,7 +33,7 @@ function main()
 	(
 		display.sizeInPixels.clone(), // size
 		null, // focalLength
-		new Location(display.sizeInPixels.clone().half())
+		new Disposition(display.sizeInPixels.clone().half())
 	);
 
 	var facePlayer = new Face
@@ -44,16 +45,16 @@ function main()
 	(
 		"Player",
 		facePlayer, // collider
-		new VisualCamera(new VisualFace("LightGray", facePlayer), () => camera)
+		new VisualCamera(new VisualFace("Gray", facePlayer), () => camera)
 	);
 
 	var moverDefnPlayer = new MoverDefn
 	(
 		1, // accelerationRun
-		.2, // accelerationFly
+		.01, // accelerationFly
 		1, // velocityMaxRun
 		6, // accelerationJump
-		8, // velocityMaxFlying
+		4, // velocityMaxFlying
 		new IntelligenceDefnHuman()
 	);
 
@@ -77,7 +78,7 @@ function main()
 	(
 		"Enemy",
 		faceEnemy, // collider
-		new VisualCamera(new VisualFace("LightGray", faceEnemy), () => camera)
+		new VisualCamera(new VisualFace("Gray", faceEnemy), () => camera)
 	);
 
 	var moverDefnEnemy = new MoverDefn

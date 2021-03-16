@@ -1,25 +1,27 @@
 
-function Body(name, defn, pos, moverDefn)
+class Body
 {
-	this.name = name;
-	this.defn = defn;
-	var loc = new Location(pos);
-	this.Locatable = new Locatable(loc);
-	this.moverDefn = moverDefn;
-
-	if (this.moverDefn != null)
+	constructor(name, defn, pos, moverDefn)
 	{
-		loc.vel = new Coords(0, 0);
+		this.name = name;
+		this.defn = defn;
+		var loc = new Disposition(pos);
+		this.Locatable = new Locatable(loc);
+		this.moverDefn = moverDefn;
+
+		if (this.moverDefn != null)
+		{
+			loc.vel = new Coords(0, 0);
+		}
+
+		this.Collidable = new Collidable(null, this.defn.collider);
+
+		this.Drawable = new Drawable(this.defn.visual);
+
+		this.Killable = new Killable(1);
 	}
 
-	this.Collidable = new Collidable(this.defn.collider);
-
-	this.Drawable = new Drawable(this.defn.visual);
-
-	this.Killable = new Killable(1);
-}
-{
-	Body.prototype.draw = function(display)
+	draw(display)
 	{
 		this.Drawable.visual.draw
 		(
@@ -28,5 +30,5 @@ function Body(name, defn, pos, moverDefn)
 			null, // drawable
 			this
 		);
-	};
+	}
 }

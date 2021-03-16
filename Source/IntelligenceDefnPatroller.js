@@ -1,11 +1,12 @@
 
-function IntelligenceDefnPatroller()
+class IntelligenceDefnPatroller
 {
-	this.distanceToExtremeMin = 5;
-}
+	constructor()
+	{
+		this.distanceToExtremeMin = 5;
+	}
 
-{
-	IntelligenceDefnPatroller.prototype.decideActionForMover = function(mover)
+	decideActionForMover(mover)
 	{
 		var moverLoc = mover.Locatable.loc;
 

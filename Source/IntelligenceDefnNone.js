@@ -1,11 +1,7 @@
 
-function IntelligenceDefnNone()
+class IntelligenceDefnNone
 {
-	// do nothing
-}
-
-{
-	IntelligenceDefnNone.prototype.decideActionForMover = function(mover)
+	decideActionForMover(mover)
 	{
 		// do nothing
 	}

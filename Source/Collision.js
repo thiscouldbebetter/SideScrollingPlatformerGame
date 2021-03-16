@@ -1,15 +1,16 @@
 
-function Collision(pos, distance, collidable)
+class Collision
 {
-	this.pos = pos;
-	this.distance = distance;
-	this.collidable = collidable;
-}
+	constructor(pos, distance, collidable)
+	{
+		this.pos = pos;
+		this.distance = distance;
+		this.collidable = collidable;
+	}
 
-{
 	// static variables
 
-	Collision.bounds =
+	static bounds =
 	[
 		new Bounds(new Coords(0, 0), new Coords(0, 0)),
 		new Bounds(new Coords(0, 0), new Coords(0, 0)),
@@ -17,7 +18,7 @@ function Collision(pos, distance, collidable)
 
 	// static methods
 
-	Collision.closestInList = function(collisionsToCheck)
+	static closestInList(collisionsToCheck)
 	{
 		var collisionClosest = collisionsToCheck[0];
 
@@ -33,7 +34,7 @@ function Collision(pos, distance, collidable)
 		return collisionClosest;
 	}
 
-	Collision.doBoundsOverlap = function(bounds0, bounds1)
+	static doBoundsOverlap(bounds0, bounds1)
 	{
 		var returnValue = false;
 
@@ -71,28 +72,4 @@ function Collision(pos, distance, collidable)
 
 		return returnValue;
 	}
-
-	/*
-	Collision.edgeWithFace = function(edge, face)
-	{
-		var returnValues = [];
-
-		var faceEdges = face.edges();
-
-		for (var i = 0; i < faceEdges.length; i++)
-		{
-			var faceEdge = faceEdges[i];
-			var collision = Collision.edgeWithOther
-			(
-				edge, faceEdge
-			);
-			if (collision != null)
-			{
-				returnValues.push(collision);
-			}
-		}
-
-		return returnValues;
-	}
-	*/
 }

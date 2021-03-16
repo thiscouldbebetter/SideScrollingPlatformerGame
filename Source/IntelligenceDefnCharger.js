@@ -1,11 +1,7 @@
 
-function IntelligenceDefnCharger()
+class IntelligenceDefnCharger
 {
-	// do nothing
-}
-
-{
-	IntelligenceDefnCharger.prototype.decideActionForMover = function(mover)
+	decideActionForMover(mover)
 	{
 		mover.Locatable.loc.vel.x -= mover.defn.accelerationRun;
 	}

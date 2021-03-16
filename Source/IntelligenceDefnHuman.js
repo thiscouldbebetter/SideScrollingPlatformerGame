@@ -1,11 +1,7 @@
 
-function IntelligenceDefnHuman()
+class IntelligenceDefnHuman
 {
-	// do nothing
-}
-
-{
-	IntelligenceDefnHuman.prototype.decideActionForMover = function(mover)
+	decideActionForMover(mover)
 	{
 		var moverDefn = mover.moverDefn;
 
