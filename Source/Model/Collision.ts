@@ -1,7 +1,11 @@
 
-class Collision
+class Collision2
 {
-	constructor(pos, distance, collidable)
+	pos: Coords;
+	distance: number;
+	collidable: Collidable;
+
+	constructor(pos: Coords, distance: number, collidable: Collidable)
 	{
 		this.pos = pos;
 		this.distance = distance;
@@ -10,15 +14,15 @@ class Collision
 
 	// static variables
 
-	static bounds =
+	static boundsPair =
 	[
-		new Bounds(new Coords(0, 0), new Coords(0, 0)),
-		new Bounds(new Coords(0, 0), new Coords(0, 0)),
+		Box.create(),
+		Box.create()
 	];
 
 	// static methods
 
-	static closestInList(collisionsToCheck)
+	static closestInList(collisionsToCheck: Collision2[]): Collision2
 	{
 		var collisionClosest = collisionsToCheck[0];
 
@@ -34,11 +38,11 @@ class Collision
 		return collisionClosest;
 	}
 
-	static doBoundsOverlap(bounds0, bounds1)
+	static doBoundsOverlap(bounds0: Box, bounds1: Box): boolean
 	{
 		var returnValue = false;
 
-		var bounds = Collision.bounds;
+		var bounds = Collision2.boundsPair;
 
 		bounds[0] = bounds0;
 		bounds[1] = bounds1;
@@ -54,8 +58,8 @@ class Collision
 			{
 				if
 				(
-					boundsThis.max.dimension(d) < boundsOther.min.dimension(d)
-					|| boundsThis.min.dimension(d) > boundsOther.max.dimension(d)
+					boundsThis.max().dimensionGet(d) < boundsOther.min().dimensionGet(d)
+					|| boundsThis.min().dimensionGet(d) > boundsOther.max().dimensionGet(d)
 				)
 				{
 					doAllDimensionsOverlapSoFar = false;

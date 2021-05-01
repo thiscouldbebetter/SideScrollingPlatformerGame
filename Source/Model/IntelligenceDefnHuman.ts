@@ -1,9 +1,9 @@
 
-class IntelligenceDefnHuman
+class IntelligenceDefnHuman implements Intelligence
 {
-	decideActionForMover(mover)
+	decideActionForMover(mover: Body): void
 	{
-		var moverDefn = mover.moverDefn;
+		var moverDefn = mover.moverDefn();
 
 		var inputHelper = Globals.Instance.inputHelper;
 		var inputsPressed = inputHelper.inputsPressed;
@@ -21,7 +21,7 @@ class IntelligenceDefnHuman
 				if (mover.platformBeingStoodOn != null)
 				{
 					mover.platformBeingStoodOn = null;
-					var moverLoc = mover.Locatable.loc;
+					var moverLoc = mover.locatable().loc;
 					moverLoc.vel.y -= moverDefn.accelerationJump;
 					moverLoc.pos.y -= 1;
 					inputHelper.inputRemove(key);
@@ -45,7 +45,7 @@ class IntelligenceDefnHuman
 					acceleration *= -1;
 				}
 
-				mover.Locatable.loc.vel.x += acceleration;
+				mover.locatable().loc.vel.x += acceleration;
 			}
 		}
 	}
