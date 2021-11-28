@@ -15,6 +15,7 @@ class LevelRun
 	private _boxMover2: Box;
 	private _boxPlatform: Box;
 	private _transformTranslate: Transform_Translate;
+	private _uwpe: UniverseWorldPlaceEntities;
 
 	constructor(level: Level, camera: Camera, bodies: Body[])
 	{
@@ -47,6 +48,7 @@ class LevelRun
 		this._boxMover2 = Box.create();
 		this._boxPlatform = Box.create();
 		this._transformTranslate = new Transform_Translate(Coords.create());
+		this._uwpe = UniverseWorldPlaceEntities.create();
 	}
 
 	updateForTimerTick(): void
@@ -54,7 +56,7 @@ class LevelRun
 		this.updateForTimerTick_Intelligence();
 		this.updateForTimerTick_Physics();
 		this.updateForTimerTick_WinOrLose();
-		this.draw(Globals.Instance.display);
+		this.draw(this._uwpe, Globals.Instance.display);
 	}
 
 	updateForTimerTick_Intelligence(): void
@@ -356,7 +358,10 @@ class LevelRun
 
 	// draw
 
-	draw(display: Display2DExtended): void
+	draw
+	(
+		uwpe: UniverseWorldPlaceEntities, display: Display2DExtended
+	): void
 	{
 		this.camera.loc.pos.overwriteWith
 		(
@@ -375,21 +380,20 @@ class LevelRun
 		(
 			Coords.Instances().Zeroes,
 			this.camera.viewSize,
-			Color.byName("White"), Color.byName("Gray"),
-			false // areColorsReversed
+			Color.byName("White"), Color.byName("Gray")
 		);
 
 		var platforms = this.platforms;
 		for (var i = 0; i < platforms.length; i++)
 		{
 			var platform = platforms[i];
-			platform.draw(display);
+			platform.draw(uwpe.entitySet(platform), display);
 		}
 
 		for (var i = 0; i < this.bodies.length; i++)
 		{
 			var body = this.bodies[i];
-			body.draw(display);
+			body.draw(uwpe.entitySet(body), display);
 		}
 	}
 

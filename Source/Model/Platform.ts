@@ -53,13 +53,11 @@ class Platform extends Entity
 
 	// drawing
 
-	draw(display: Display2DExtended): void
+	draw(uwpe: UniverseWorldPlaceEntities, display: Display2DExtended): void
 	{
 		this.drawable().visual.draw
 		(
-			null, null, null, // universe, world, place
-			this, // entity
-			display 
+			uwpe, display 
 		);
 	}
 }

@@ -5,12 +5,13 @@ class VisualCamera {
         this.cameraFactory = cameraFactory;
         this._posToRestore = Coords.create();
     }
-    draw(universe, world, place, entity, display) {
+    draw(uwpe, display) {
+        var entity = uwpe.entity;
         var drawablePos = entity.locatable().loc.pos;
         this._posToRestore.overwriteWith(drawablePos);
         var camera = this.cameraFactory();
         drawablePos.subtract(camera.loc.pos).add(camera.viewSizeHalf);
-        this.child.draw(universe, world, place, entity, display);
+        this.child.draw(uwpe, display);
         drawablePos.overwriteWith(this._posToRestore);
     }
     // Clonable.

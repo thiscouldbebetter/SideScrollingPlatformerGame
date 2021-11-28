@@ -24,13 +24,11 @@ class Body extends Entity
 		);
 	}
 
-	draw(display: Display2D): void
+	draw(uwpe: UniverseWorldPlaceEntities, display: Display2D): void
 	{
 		this.drawable().visual.draw
 		(
-			null, null, null, // universe, world, place
-			this, // entity
-			display
+			uwpe, display
 		);
 	}
 

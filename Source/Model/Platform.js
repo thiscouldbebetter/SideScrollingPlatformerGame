@@ -24,9 +24,7 @@ class Platform extends Entity {
         return this;
     }
     // drawing
-    draw(display) {
-        this.drawable().visual.draw(null, null, null, // universe, world, place
-        this, // entity
-        display);
+    draw(uwpe, display) {
+        this.drawable().visual.draw(uwpe, display);
     }
 }

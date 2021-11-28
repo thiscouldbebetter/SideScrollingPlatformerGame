@@ -6,7 +6,8 @@ class VisualFace {
         this._faceTransformed = this.face.clone();
         this._transform = new Transform_Translate(Coords.create());
     }
-    draw(universe, world, place, entity, displayAsDisplay) {
+    draw(uwpe, displayAsDisplay) {
+        var entity = uwpe.entity;
         var display = displayAsDisplay;
         var drawablePos = entity.locatable().loc.pos;
         this._transform.displacement.overwriteWith(drawablePos);

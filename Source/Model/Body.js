@@ -10,10 +10,8 @@ class Body extends Entity {
             moverDefn
         ]);
     }
-    draw(display) {
-        this.drawable().visual.draw(null, null, null, // universe, world, place
-        this, // entity
-        display);
+    draw(uwpe, display) {
+        this.drawable().visual.draw(uwpe, display);
     }
     moverDefn() {
         return this.propertyByName(MoverDefn.name);

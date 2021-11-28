@@ -1,12 +1,12 @@
 
-class VisualCamera implements Visual
+class VisualCamera implements VisualBase
 {
-	child: Visual;
-	cameraFactory: any;
+	child: VisualBase;
+	cameraFactory: () => Camera;
 
 	private _posToRestore: Coords;
 
-	constructor(child: Visual, cameraFactory: any)
+	constructor(child: VisualBase, cameraFactory: () => Camera)
 	{
 		this.child = child;
 		this.cameraFactory = cameraFactory;
@@ -14,25 +14,23 @@ class VisualCamera implements Visual
 		this._posToRestore = Coords.create();
 	}
 
-	draw
-	(
-		universe: Universe, world: World, place: Place, entity: Entity,
-		display: Display
-	): void
+	draw(uwpe: UniverseWorldPlaceEntities, display: Display): void
 	{
+		var entity = uwpe.entity;
+
 		var drawablePos = entity.locatable().loc.pos;
 		this._posToRestore.overwriteWith(drawablePos);
 
 		var camera = this.cameraFactory();
 		drawablePos.subtract(camera.loc.pos).add(camera.viewSizeHalf);
-		this.child.draw(universe, world, place, entity, display);
+		this.child.draw(uwpe, display);
 
 		drawablePos.overwriteWith(this._posToRestore);
 	}
 
 	// Clonable.
-	clone(): Visual { return this; }
-	overwriteWith(x: Visual): Visual { return this; }
+	clone(): VisualBase { return this; }
+	overwriteWith(x: VisualBase): VisualBase { return this; }
 
-	transform(transformToApply: Transform): Transformable { return this; }
+	transform(transformToApply: TransformBase): VisualBase { return this; }
 }

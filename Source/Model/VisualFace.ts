@@ -1,5 +1,5 @@
 
-class VisualFace implements Visual
+class VisualFace implements VisualBase
 {
 	color: Color;
 	face: Face;
@@ -16,12 +16,9 @@ class VisualFace implements Visual
 		this._transform = new Transform_Translate(Coords.create());
 	}
 
-	draw
-	(
-		universe: Universe, world: World, place: Place, entity: Entity,
-		displayAsDisplay: Display
-	): void
+	draw(uwpe: UniverseWorldPlaceEntities, displayAsDisplay: Display): void
 	{
+		var entity = uwpe.entity;
 		var display = displayAsDisplay as Display2DExtended;
 
 		var drawablePos = entity.locatable().loc.pos;
@@ -39,9 +36,9 @@ class VisualFace implements Visual
 	}
 
 	// Clonable.
-	clone(): Visual { return this; }
-	overwriteWith(x: Visual): Visual { return this; }
+	clone(): VisualBase { return this; }
+	overwriteWith(x: VisualBase): VisualBase { return this; }
 
 	// Transformable.
-	transform(transformToApply: Transform): Transformable { return this; }
+	transform(transformToApply: TransformBase): VisualBase { return this; }
 }

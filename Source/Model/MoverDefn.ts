@@ -1,5 +1,5 @@
 
-class MoverDefn implements EntityProperty
+class MoverDefn implements EntityPropertyBase
 {
 	accelerationRun: number;
 	accelerationFly: number;
@@ -27,8 +27,10 @@ class MoverDefn implements EntityProperty
 	}
 
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
+	// Equatable.
+	equals(other: MoverDefn): boolean { return false; }
 }

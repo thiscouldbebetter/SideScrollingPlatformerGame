@@ -20,12 +20,13 @@ class LevelRun {
         this._boxMover2 = Box.create();
         this._boxPlatform = Box.create();
         this._transformTranslate = new Transform_Translate(Coords.create());
+        this._uwpe = UniverseWorldPlaceEntities.create();
     }
     updateForTimerTick() {
         this.updateForTimerTick_Intelligence();
         this.updateForTimerTick_Physics();
         this.updateForTimerTick_WinOrLose();
-        this.draw(Globals.Instance.display);
+        this.draw(this._uwpe, Globals.Instance.display);
     }
     updateForTimerTick_Intelligence() {
         for (var m = 0; m < this.bodies.length; m++) {
@@ -198,19 +199,18 @@ class LevelRun {
         }
     }
     // draw
-    draw(display) {
+    draw(uwpe, display) {
         this.camera.loc.pos.overwriteWith(this.bodyForPlayer.locatable().loc.pos).trimToRangeMinMax(this.camera.viewSizeHalf, this.level.size.clone().subtract(this.camera.viewSizeHalf));
         display.clear();
-        display.drawRectangle(Coords.Instances().Zeroes, this.camera.viewSize, Color.byName("White"), Color.byName("Gray"), false // areColorsReversed
-        );
+        display.drawRectangle(Coords.Instances().Zeroes, this.camera.viewSize, Color.byName("White"), Color.byName("Gray"));
         var platforms = this.platforms;
         for (var i = 0; i < platforms.length; i++) {
             var platform = platforms[i];
-            platform.draw(display);
+            platform.draw(uwpe.entitySet(platform), display);
         }
         for (var i = 0; i < this.bodies.length; i++) {
             var body = this.bodies[i];
-            body.draw(display);
+            body.draw(uwpe.entitySet(body), display);
         }
     }
 }

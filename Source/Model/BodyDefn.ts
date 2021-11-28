@@ -1,11 +1,11 @@
 
-class BodyDefn implements EntityProperty
+class BodyDefn implements EntityPropertyBase
 {
 	name: string;
 	collider: ShapeBase;
-	visual: Visual;
+	visual: VisualBase;
 
-	constructor(name: string, collider: ShapeBase, visual: Visual)
+	constructor(name: string, collider: ShapeBase, visual: VisualBase)
 	{
 		this.name = name;
 		this.collider = collider;
@@ -13,7 +13,10 @@ class BodyDefn implements EntityProperty
 	}
 
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
+
+	// Equatable.
+	equals(other: BodyDefn): boolean { return false; }
 }
