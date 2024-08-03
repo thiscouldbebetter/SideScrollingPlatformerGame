@@ -8,6 +8,7 @@ class BodyDefn {
     // EntityProperty.
     finalize(uwpe) { }
     initialize(uwpe) { }
+    propertyName() { return BodyDefn.name; }
     updateForTimerTick(uwpe) { }
     // Equatable.
     equals(other) { return false; }

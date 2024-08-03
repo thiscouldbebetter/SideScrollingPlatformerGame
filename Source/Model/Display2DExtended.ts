@@ -16,8 +16,11 @@ class Display2DExtended extends Display2D
 	{
 		super
 		(
-			sizesAvailable, fontName, fontHeightInPixels, colorFore,
-			colorBack, isInvisible
+			sizesAvailable,
+			new FontNameAndHeight(fontName, fontHeightInPixels),
+			colorFore,
+			colorBack,
+			isInvisible
 		);
 	}
 

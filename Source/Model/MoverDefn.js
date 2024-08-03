@@ -11,6 +11,7 @@ class MoverDefn {
     // EntityProperty.
     finalize(uwpe) { }
     initialize(uwpe) { }
+    propertyName() { return MoverDefn.name; }
     updateForTimerTick(uwpe) { }
     // Equatable.
     equals(other) { return false; }

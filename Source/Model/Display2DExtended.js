@@ -1,7 +1,7 @@
 "use strict";
 class Display2DExtended extends Display2D {
     constructor(sizesAvailable, fontName, fontHeightInPixels, colorFore, colorBack, isInvisible) {
-        super(sizesAvailable, fontName, fontHeightInPixels, colorFore, colorBack, isInvisible);
+        super(sizesAvailable, new FontNameAndHeight(fontName, fontHeightInPixels), colorFore, colorBack, isInvisible);
     }
     static fromSize(size) {
         return new Display2DExtended([size], null, null, null, null, false);
